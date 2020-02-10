@@ -1,0 +1,56 @@
+$container_width: (
+  "desktop": 1040px,
+  "mobile": 100%
+);
+$shadow_default: 0 0 2px 2px rgba(0, 0, 0, 0.2);
+$center: 0 auto;
+$gutter: 32px;
+$section_margin: 50px;
+$title_margin: 20px;
+$micro_space: 5px;
+$smaller_space: 7px;
+$small_space: 10px;
+$colors: (
+  "primary": #2c3e50,
+  "secondary": #46719c,
+  "warning": #9c7636,
+  "third": #4f422b,
+  "light": #fff
+);
+
+@mixin bgcolor($color) {
+  background-color: map-get($colors, $color);
+}
+
+@mixin textcolor($color) {
+  color: map-get($colors, $color);
+}
+
+@mixin flex-v-center {
+  display: flex;
+  align-items: center;
+}
+@mixin formbutton {
+  width: 300px;
+  max-width: 100%;
+  margin: $center;
+  margin-top: 15px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+@mixin userform {
+  form {
+    width: 100%;
+    max-width: 400px;
+    margin: $center;
+
+    text-align: left;
+    label {
+      @include textcolor("text2");
+      margin-bottom: $small_space;
+      display: block;
+      font-weight: 700;
+    }
+  }
+}
