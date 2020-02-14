@@ -45,7 +45,7 @@ export default {
 <style lang="scss" scoped>
 .games-list {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   justify-content: space-between;
   margin-top: $section_margin;
 

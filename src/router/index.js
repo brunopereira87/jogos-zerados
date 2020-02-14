@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Games from "../views/Games.vue";
+import GameRegister from "../views/GameRegister.vue";
 import Plataforms from "../views/Plataforms.vue";
 
 Vue.use(VueRouter);
@@ -24,6 +25,11 @@ const routes = [
         props: true
       }
     ]
+  },
+  {
+    path: "/jogos/cadastrar",
+    name: "register-game",
+    component: GameRegister
   },
   {
     path: "/plataformas",

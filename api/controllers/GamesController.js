@@ -1,18 +1,28 @@
 const Game = require("../models/Game");
 const slugify = require("slugify");
+const APIFeature = require("../utils/APIFeature");
 const { convertDate, stringToArray } = require("../helpers");
 
-exports.getAllGames = (req, res) => {
-  Game.find()
-    .exec()
-    .then(docs => {
-      res.status(200).json({
-        success: true,
-        results: docs.length,
-        games: docs
-      });
-    })
-    .catch(err => res.status(500).json({ error: err }));
+exports.getAllGames = async (req, res) => {
+  try {
+    //BUILDING QUERY
+    const feature = new APIFeature(Game.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    //EXECUTE QUERY
+    const games = await feature.query;
+    //SEND RESPONSE
+    res.status(200).json({
+      success: true,
+      results: games.length,
+      games
+    });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 
 exports.getGame = (req, res) => {
