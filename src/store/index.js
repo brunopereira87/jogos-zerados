@@ -16,13 +16,19 @@ export default new Vuex.Store({
       video: "",
       release_date: "",
       metacritic: null
-    }
+    },
+    success_message: ""
   },
+
   mutations: {
     UPDATE_GAME(state, payload) {
       state.game = Object.assign(state.game, payload);
+    },
+    UPDATE_SUCCESS(state, payload) {
+      state.success_message = payload;
     }
   },
+
   actions: {},
   modules: {}
 });

@@ -3,7 +3,7 @@
     <TheHeader />
     <main class="main container">
       <transition mode="out-in">
-        <router-view />
+        <router-view :key="$route.fullPath" />
       </transition>
     </main>
     <TheFooter />
@@ -29,7 +29,6 @@ export default {
   font-family: "Roboto", "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   display: flex;
   flex-direction: column;
   min-height: 100vh;

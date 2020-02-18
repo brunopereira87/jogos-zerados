@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Games from "../views/Games.vue";
+import GameSingle from "../views/GameSingle.vue";
 import GameRegister from "../views/GameRegister.vue";
 import Plataforms from "../views/Plataforms.vue";
 
@@ -14,17 +15,16 @@ const routes = [
     component: Home
   },
   {
-    path: "/jogos",
+    path: "/jogos/:slug",
     name: "games",
     component: Games,
-    props: true,
-    children: [
-      {
-        path: "/:slug",
-        name: "single-game",
-        props: true
-      }
-    ]
+    props: true
+  },
+  {
+    path: "jogo/:id/:slug",
+    name: "single-game",
+    component: GameSingle,
+    props: true
   },
   {
     path: "/jogos/cadastrar",

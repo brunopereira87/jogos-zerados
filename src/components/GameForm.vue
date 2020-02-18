@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form enctype="multipart/form-data">
     <div class="form-group">
       <label for="name">Nome:</label>
       <input type="text" v-model="name" name="name" />
@@ -14,7 +14,8 @@
           :key="plataform._id"
           :value="plataform._id"
           :selected="plataform_selected === plataform._id"
-        >{{plataform.name}}</option>
+          >{{ plataform.name }}</option
+        >
       </select>
     </div>
 
@@ -25,7 +26,12 @@
 
     <div class="form-group">
       <label for="release_date">Data de Lançamento:</label>
-      <input type="datetime" v-model="release_date" name="release_date" />
+      <input
+        type="datetime"
+        v-model="release_date"
+        v-mask="'##/##/####'"
+        name="release_date"
+      />
     </div>
 
     <div class="form-group">
@@ -53,9 +59,19 @@
     </div>
     <div class="form-group fullrow">
       <label for="screenshots">Screenshots:</label>
-      <input type="file" multiple name="screenshots" @change="onMultiFilesChange" ref="screenshots" />
+      <input
+        type="file"
+        multiple
+        name="screenshots"
+        @change="onMultiFilesChange"
+        ref="screenshots"
+      />
       <div class="previews" v-if="urls_screenshots.length > 0">
-        <figure v-for="(image, key) in urls_screenshots" :key="key" class="thumbnail-preview">
+        <figure
+          v-for="(image, key) in urls_screenshots"
+          :key="key"
+          class="thumbnail-preview"
+        >
           <img :ref="`image${parseInt(key)}`" />
         </figure>
       </div>

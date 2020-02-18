@@ -1,31 +1,17 @@
 <template>
   <section class="home">
     <GameFeatured />
-    <section class="games-list most-played">
+    <section class="most-played">
       <h2 class="title">Mais jogados no momento</h2>
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
+      <div class="games-list" v-if="games.length > 0">
+        <GameCard v-for="game in games" :key="game._id" :game="game" />
+      </div>
     </section>
-    <section class="games-list most-rated">
+    <section class="most-rated">
       <h2 class="title">Mais bem avaliados</h2>
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
-      <GameCard />
+      <div class="games-list" v-if="games.length > 0">
+        <GameCard v-for="game in games" :key="game._id" :game="game" />
+      </div>
     </section>
   </section>
 </template>
@@ -34,11 +20,31 @@
 // @ is an alias to /src
 import GameFeatured from "@/components/GameFeatured";
 import GameCard from "@/components/GameCard";
+import { api } from "@/services";
 export default {
   name: "home",
   components: {
     GameFeatured,
     GameCard
+  },
+  data() {
+    return {
+      games: []
+    };
+  },
+  methods: {
+    async getGames() {
+      try {
+        const response = await api.get("/games");
+        this.games = response.data.games;
+        console.log("GAmes:", this.games);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+  created() {
+    this.getGames();
   }
 };
 </script>
@@ -55,8 +61,8 @@ export default {
     text-align: left;
     margin-bottom: $title_margin;
   }
-  &.most-rated {
-    margin-top: 30px;
-  }
+}
+.most-rated {
+  margin-top: 30px;
 }
 </style>

@@ -13,7 +13,7 @@ router
       { name: "artbox", maxCount: 1 },
       { name: "screenshots", maxCount: 16 }
     ]),
-    //imageMiddleware.upload.array("screenshots"),
+
     GamesController.createGame
   );
 router

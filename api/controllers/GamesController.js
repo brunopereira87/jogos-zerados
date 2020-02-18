@@ -53,6 +53,7 @@ exports.createGame = (req, res) => {
     .then(result => {
       if (result) {
         return res.status(409).json({
+          success: false,
           message: "Jogo já cadastrado"
         });
       }
@@ -75,6 +76,9 @@ exports.createGame = (req, res) => {
         .json({ success: true, message: "Jogo cadastrado com sucesso" })
     )
     .catch(err => res.status(500).json({ error: err }));
+  res
+    .status(201)
+    .json({ success: true, message: "Jogo cadastrado com sucesso" });
 };
 
 exports.deleteGame = (req, res) => {
