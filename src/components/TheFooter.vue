@@ -22,5 +22,6 @@ footer {
       text-decoration: underline;
     }
   }
+  text-align: center;
 }
 </style>

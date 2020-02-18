@@ -3,7 +3,7 @@
     <TheHeader />
     <main class="main container">
       <transition mode="out-in">
-        <router-view />
+        <router-view :key="$route.fullPath" />
       </transition>
     </main>
     <TheFooter />
@@ -29,7 +29,6 @@ export default {
   font-family: "Roboto", "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -37,7 +36,8 @@ export default {
   @include bgcolor("secondary");
 }
 .container {
-  max-width: map-get($container_width, "desktop");
+  width: map-get($container_width, "desktop");
+  max-width: 100%;
   margin: $center;
 }
 ul,
@@ -67,5 +67,21 @@ a {
   font-size: 2.5rem;
   font-weight: 500;
   @include textcolor("light");
+}
+
+.btn {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-submit {
+  font-weight: 600;
+  @include bgcolor("primary");
+  @include textcolor("light");
+  transition: all 0.3s;
+  &:hover {
+    @include bgcolor("fourth");
+  }
 }
 </style>

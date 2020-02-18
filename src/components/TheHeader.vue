@@ -1,42 +1,31 @@
 <template>
   <header>
     <div class="container">
-      <router-link to="/"
-        ><h1>
-          <img src="../assets/logo-white.svg" alt="Logo" /></h1
-      ></router-link>
+      <router-link to="/">
+        <h1>
+          <img src="../assets/logo-white.svg" alt="Logo" />
+        </h1>
+      </router-link>
 
       <nav id="nav">
         <ul class="nav-menu">
           <li>
-            <router-link :to="{ name: 'games', params: { slug: 'switch' } }"
-              >Switch</router-link
-            >
+            <router-link :to="{ name: 'games', params: { slug: 'nintendo-switch' } }">Switch</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'games', params: { slug: 'ps4' } }"
-              >PS4</router-link
-            >
+            <router-link :to="{ name: 'games', params: { slug: 'playstation-4' } }">PS4</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'games', params: { slug: 'xbox-one' } }"
-              >Xbox One</router-link
-            >
+            <router-link :to="{ name: 'games', params: { slug: 'xbox-one' } }">Xbox One</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'games', params: { slug: 'pc' } }"
-              >PC</router-link
-            >
+            <router-link :to="{ name: 'games', params: { slug: 'pc' } }">PC</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'games', params: { slug: 'stadia' } }"
-              >Stadia</router-link
-            >
+            <router-link :to="{ name: 'games', params: { slug: 'stadia' } }">Stadia</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'games', params: { slug: '3ds' } }"
-              >3DS</router-link
-            >
+            <router-link :to="{ name: 'games', params: { slug: '3ds' } }">3DS</router-link>
           </li>
           <li>
             <router-link :to="{ name: 'plataforms' }">Outros</router-link>

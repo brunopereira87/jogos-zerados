@@ -10,10 +10,10 @@ router
     PlataformsController.createPlataform
   )
   .get(PlataformsController.getAllPlataforms);
-
+router.route("/:slug").get(PlataformsController.getPlataform);
 router
-  .route("/:id")
-  .get(PlataformsController.getPlataform)
+  .route("/admin/:id")
+  .get(PlataformsController.getPlataformById)
   .patch(
     imageMiddleware.upload_single,
     PlataformsController.updatePlataformField

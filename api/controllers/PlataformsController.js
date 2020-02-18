@@ -46,6 +46,24 @@ exports.getAllPlataforms = (req, res) => {
 };
 
 exports.getPlataform = (req, res) => {
+  const slug = req.params.slug;
+  console.log(slug);
+  Plataform.findOne({ slug: slug })
+    .then(doc => {
+      if (doc) {
+        res.status(200).json({
+          success: true,
+          plataform: doc
+        });
+      } else {
+        res
+          .status(404)
+          .json({ message: "Plataforma não encontrada", success: false });
+      }
+    })
+    .catch(err => res.status(500).json({ error: err }));
+};
+exports.getPlataformById = (req, res) => {
   const id = req.params.id;
   Plataform.findOne({ _id: id })
     .then(doc => {

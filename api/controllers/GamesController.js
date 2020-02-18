@@ -1,18 +1,28 @@
 const Game = require("../models/Game");
 const slugify = require("slugify");
+const APIFeature = require("../utils/APIFeature");
 const { convertDate, stringToArray } = require("../helpers");
 
-exports.getAllGames = (req, res) => {
-  Game.find()
-    .exec()
-    .then(docs => {
-      res.status(200).json({
-        success: true,
-        results: docs.length,
-        games: docs
-      });
-    })
-    .catch(err => res.status(500).json({ error: err }));
+exports.getAllGames = async (req, res) => {
+  try {
+    //BUILDING QUERY
+    const feature = new APIFeature(Game.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    //EXECUTE QUERY
+    const games = await feature.query;
+    //SEND RESPONSE
+    res.status(200).json({
+      success: true,
+      results: games.length,
+      games
+    });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 
 exports.getGame = (req, res) => {
@@ -43,6 +53,7 @@ exports.createGame = (req, res) => {
     .then(result => {
       if (result) {
         return res.status(409).json({
+          success: false,
           message: "Jogo já cadastrado"
         });
       }
@@ -65,6 +76,9 @@ exports.createGame = (req, res) => {
         .json({ success: true, message: "Jogo cadastrado com sucesso" })
     )
     .catch(err => res.status(500).json({ error: err }));
+  res
+    .status(201)
+    .json({ success: true, message: "Jogo cadastrado com sucesso" });
 };
 
 exports.deleteGame = (req, res) => {

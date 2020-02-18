@@ -1,18 +1,24 @@
 <template>
   <div class="game-card">
-    <router-link :to="{name:'single-game',params:{slug:'zelda-botw'}}">
+    <router-link :to="{ name: 'single-game', params: { slug: game.slug } }">
       <figure>
-        <img src="../assets/zelda_box_art.jpg" alt="Capa do Jogo" />
+        <img :src="`http://localhost:3000/${artbox}`" :alt="game.name" />
       </figure>
 
-      <p class="title">The Legend of Zelda: Breath of The Wild</p>
+      <p class="title">{{ game.name }}</p>
     </router-link>
   </div>
 </template>
 
 <script>
 export default {
-  name: "GameCard"
+  name: "GameCard",
+  props: ["game"],
+  computed: {
+    artbox() {
+      return this.game.artbox.replace("api\\uploads\\", "/");
+    }
+  }
 };
 </script>
 
@@ -26,7 +32,17 @@ export default {
     margin-top: -4px;
     @include bgcolor("primary");
     @include textcolor("light");
-    padding: 5px 10px;
+    height: 50px;
+    text-align: center;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
   }
 }
 </style>
