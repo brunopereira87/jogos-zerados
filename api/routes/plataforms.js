@@ -5,19 +5,27 @@ const PlataformsController = require("../controllers/PlataformsController");
 
 router
   .route("/")
+
+  .get(PlataformsController.getAllPlataforms);
+
+router
+  .route("/admin")
   .post(
     imageMiddleware.upload.single("logo"),
     PlataformsController.createPlataform
-  )
-  .get(PlataformsController.getAllPlataforms);
+  );
 router.route("/:slug").get(PlataformsController.getPlataform);
+
 router
   .route("/admin/:id")
   .get(PlataformsController.getPlataformById)
   .patch(
-    imageMiddleware.upload_single,
-    PlataformsController.updatePlataformField
+    imageMiddleware.upload.single("logo"),
+    PlataformsController.updatePlataform
   )
-  .put(imageMiddleware.upload_single, PlataformsController.updatePlataform)
+  // .put(
+  //   imageMiddleware.upload.single("logo"),
+  //   PlataformsController.updatePlataform
+  // )
   .delete(PlataformsController.deletePlataform);
 module.exports = router;

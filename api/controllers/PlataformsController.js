@@ -1,153 +1,168 @@
 const Plataform = require("../models/Plataform");
 const slugify = require("slugify");
 const { convertDate } = require("../helpers");
-exports.createPlataform = (req, res) => {
-  const slug = slugify(req.body.name, { lower: true });
+const APIFeature = require("../utils/APIFeature");
+exports.createPlataform = async (req, res) => {
+  try {
+    const slug = slugify(req.body.name, { lower: true });
+    const plataform = await Plataform.findOne({ slug: slug });
 
-  Plataform.findOne({ slug: slug })
-    .exec()
-    .then(doc => {
-      if (doc) {
-        return res.status(409).json({
-          success: false,
-          message: "A plataforma já existe"
-        });
-      }
+    if (plataform) {
+      return res.status(409).json({
+        success: false,
+        message: "A plataforma já existe"
+      });
+    }
+
+    req.body.slug = slug;
+    req.body.release_date = req.body.release_date
+      ? convertDate(req.body.release_date)
+      : null;
+    req.body.logo = req.file.path;
+
+    //console.log(req.body);
+    const new_plataform = await Plataform.create(req.body);
+    res.status(201).json({
+      success: true,
+      message: "Plataforma criada com sucesso",
+      plataform: new_plataform
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+};
+
+exports.getAllPlataforms = async (req, res) => {
+  try {
+    const feature = new APIFeature(Plataform.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const plataforms = await feature.query;
+
+    res.status(200).json({
+      results: plataforms.length,
+      plataforms: plataforms
+    });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+};
+
+exports.getPlataform = async (req, res) => {
+  try {
+    const slug = req.params.slug;
+    const plataform = await Plataform.findOne({ slug: slug });
+
+    if (plataform) {
+      res.status(200).json({
+        success: true,
+        plataform: plataform
+      });
+    } else {
+      res
+        .status(404)
+        .json({ message: "Plataforma não encontrada", success: false });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+};
+exports.getPlataformById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const plataform = await Plataform.findOne({ _id: id });
+
+    if (plataform) {
+      res.status(200).json({
+        success: true,
+        plataform: plataform
+      });
+    } else {
+      res
+        .status(404)
+        .json({ message: "Plataforma não encontrada", success: false });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+};
+
+exports.updatePlataform = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    if (req.file) {
+      req.body.logo = req.file.path;
+      console.log(req.body.logo);
+    }
+    //console.log(req.body.logo);
+    const plataform = await Plataform.findOneAndUpdate({ _id: id }, req.body, {
+      new: true,
+      runValidators: true
     });
 
-  req.body.slug = slug;
-  req.body.release_date = req.body.release_date
-    ? convertDate(req.body.release_date)
-    : null;
-  req.body.logo = req.file.path;
-
-  console.log(req.body);
-  const plataform = new Plataform(req.body);
-  plataform
-    .save()
-    .then(() =>
-      res.status(201).json({
-        success: true,
-        message: "Plataforma criada com sucesso"
-      })
-    )
-    .catch(error => res.status(500).json({ error: error }));
-};
-
-exports.getAllPlataforms = (req, res) => {
-  Plataform.find()
-    .then(docs => {
+    if (plataform) {
       res.status(200).json({
-        results: docs.length,
-        plataforms: docs
+        message: "Plataforma atualizada com sucesso",
+        success: true,
+        plataform
       });
-    })
-    .catch(err => res.status(500).json({ error: err }));
-};
-
-exports.getPlataform = (req, res) => {
-  const slug = req.params.slug;
-  console.log(slug);
-  Plataform.findOne({ slug: slug })
-    .then(doc => {
-      if (doc) {
-        res.status(200).json({
-          success: true,
-          plataform: doc
-        });
-      } else {
-        res
-          .status(404)
-          .json({ message: "Plataforma não encontrada", success: false });
-      }
-    })
-    .catch(err => res.status(500).json({ error: err }));
-};
-exports.getPlataformById = (req, res) => {
-  const id = req.params.id;
-  Plataform.findOne({ _id: id })
-    .then(doc => {
-      if (doc) {
-        res.status(200).json({
-          success: true,
-          plataform: doc
-        });
-      } else {
-        res
-          .status(404)
-          .json({ message: "Plataforma não encontrada", success: false });
-      }
-    })
-    .catch(err => res.status(500).json({ error: err }));
-};
-
-exports.updatePlataformField = (req, res) => {
-  const id = req.params.id;
-
-  // const update_fields = {};
-  // for (const field of req.body) {
-  //   update_fields[field.name] = field.value;
-  // }
-
-  const update_fields = {};
-  if (req.body.length) {
-    for (const field of req.body) {
-      // update_fields[field] = field.value;
-      console.log(field);
-    }
-  }
-
-  if (req.file) {
-    update_fields.logo = req.file.path;
-    console.log(update_fields);
-  }
-  //console.log(req.body.logo);
-  Plataform.findOneAndUpdate({ _id: id }, update_fields)
-    .then(results => {
-      if (results) {
-        res.status(200).json({
-          message: "Plataforma atualizada com sucesso",
-          success: true
-        });
-      } else {
-        res
-          .status(404)
-          .json({ message: "Plataforma não encontrada", success: false });
-      }
-    })
-    .catch(err => res.status(500).json({ error: err }));
-};
-
-exports.updatePlataform = (req, res) => {
-  const id = req.params.id;
-  if (req.file) {
-    req.body.logo = req.file.path;
-  }
-
-  Plataform.findOneAndUpdate({ _id: id }, req.body)
-    .then(() =>
+    } else {
       res
-        .status(200)
-        .json({ message: "Plataforma atualizada com sucesso", success: true })
-    )
-    .catch(err => res.status(500).json({ error: err }));
+        .status(404)
+        .json({ message: "Plataforma não encontrada", success: false });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 
-exports.deletePlataform = (req, res) => {
-  const id = req.params.id;
-  Plataform.deleteOne({ _id: id })
-    .then(doc => {
-      if (doc) {
-        res.status(200).json({
-          success: true,
-          plataform: doc,
-          message: "Plataforma removida com sucesso"
-        });
-      } else {
-        res
-          .status(404)
-          .json({ message: "Plataforma não encontrada", success: false });
-      }
-    })
-    .catch(err => res.status(500).json({ error: err }));
+// exports.updatePlataform = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     if (req.file) {
+//       req.body.logo = req.file.path;
+//     }
+
+//     const plataform = await Plataform.findOneAndUpdate({ _id: id }, req.body, {
+//       new: true,
+//       runValidators: true
+//     });
+//     if (plataform) {
+//       res.status(200).json({
+//         message: "Plataforma atualizada com sucesso",
+//         success: true,
+//         plataform
+//       });
+//     } else {
+//       res
+//         .status(404)
+//         .json({ message: "Plataforma não encontrada", success: false });
+//     }
+//   } catch (err) {
+//     res.status(500).json({ error: err });
+//   }
+// };
+
+exports.deletePlataform = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const plataform = await Plataform.deleteOne({ _id: id });
+    if (plataform) {
+      res.status(200).json({
+        success: true,
+        plataform,
+        message: "Plataforma removida com sucesso"
+      });
+    } else {
+      res
+        .status(404)
+        .json({ message: "Plataforma não encontrada", success: false });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };

@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "api": "nodemon api/server.js"
+    "api": "nodemon api/server.js",
+    "debug": "ndb api/server.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -48,7 +49,8 @@
       "eslint:recommended"
     ],
     "rules": {
-      "no-console": "off"
+      "no-console": "off",
+      "no-unused-vars": "off"
     },
     "parserOptions": {
       "parser": "babel-eslint"

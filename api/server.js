@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 require("dotenv").config({ path: "variables.env" });
 
 const app = require("./app");
-console.log(process.env.PORT);
+
 mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
