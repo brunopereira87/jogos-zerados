@@ -13,6 +13,11 @@ const gamesSchema = Schema({
     type: String,
     required: true
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+    select: false
+  },
   developer: String,
   publisher: String,
   metacritic: Number,

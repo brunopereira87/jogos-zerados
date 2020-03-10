@@ -5,6 +5,7 @@ const path = require("path");
 const games = require("./routes/games");
 const plataforms = require("./routes/plataforms");
 const AppError = require("./utils/AppError");
+const globalErrorHandler = require("./controllers/ErrorController");
 const app = express();
 //Middlewares
 app.use(express.json());
@@ -32,13 +33,5 @@ app.all("*", (req, res, next) => {
   next(error);
 });
 
-app.use((err, req, res, next) => {
-  err.success = err.success || false;
-  err.statusCode = err.statusCode || 500;
-
-  res.status(err.statusCode).json({
-    success: err.success,
-    message: err.message
-  });
-});
+app.use(globalErrorHandler);
 module.exports = app;

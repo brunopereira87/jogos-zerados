@@ -6,7 +6,7 @@ const { convertDate, stringToArray } = require("../helpers");
 exports.getAllGames = async (req, res) => {
   try {
     //BUILDING QUERY
-    const feature = new APIFeature(Game.find(), req.query)
+    const feature = new APIFeature(Game.find().populate(), req.query)
       .filter()
       .sort()
       .limitFields()
@@ -25,72 +25,84 @@ exports.getAllGames = async (req, res) => {
   }
 };
 
-exports.getGame = (req, res) => {
-  const id = req.params.id;
+exports.getGame = async (req, res) => {
+  try {
+    const id = req.params.id;
 
-  Game.findOne({ _id: id })
-    .exec()
-    .then(doc => {
-      if (doc) {
-        res.status.json({
-          success: true,
-          game: doc
-        });
-      } else {
-        res.status(404).json({
-          success: false,
-          message: "O jogo não foi encontrado"
-        });
-      }
-    })
-    .catch(err => res.status(500).json({ error: err }));
+    const game = await Game.findOne({ _id: id });
+
+    if (game) {
+      res.status(200).json({
+        success: true,
+        game: game
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "O jogo não foi encontrado"
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 
-exports.createGame = (req, res) => {
-  const slug = slugify(req.body.name, { lower: true });
-  Game.findOne({ slug: slug }, { plataform: req.body.plataform })
-    .exec()
-    .then(result => {
-      if (result) {
-        return res.status(409).json({
-          success: false,
-          message: "Jogo já cadastrado"
-        });
-      }
+exports.createGame = async (req, res) => {
+  try {
+    const slug = slugify(req.body.name, { lower: true });
+    const result = await Game.findOne(
+      { slug: slug },
+      { plataform: req.body.plataform }
+    );
+
+    if (result) {
+      return res.status(409).json({
+        success: false,
+        message: "Jogo já cadastrado"
+      });
+    }
+
+    req.body.slug = slug;
+    req.body.release_date = req.body.release_date
+      ? convertDate(req.body.release_date)
+      : null;
+
+    if (req.body.styles) req.body.styles = stringToArray(req.body.styles, ",");
+
+    if (req.files) {
+      if (req.files.screenshots.length > 0)
+        req.body.screenshots = getImagesPath(req.files.screenshots);
+
+      if (req.files.artbox.length > 0)
+        req.body.artbox = req.files.artbox[0].path;
+    }
+
+    const newGame = await Game.create(req.body);
+    res.status(201).json({
+      success: true,
+      message: "Jogo cadastrado com sucesso",
+      game: newGame
     });
-  req.body.slug = slug;
-  req.body.release_date = req.body.release_date
-    ? convertDate(req.body.release_date)
-    : null;
-
-  req.body.styles = stringToArray(req.body.styles, ",");
-  req.body.screenshots = getImagesPath(req.files.screenshots);
-  req.body.artbox = req.files.artbox[0].path;
-
-  const game = new Game(req.body);
-  game
-    .save()
-    .then(() =>
-      res
-        .status(201)
-        .json({ success: true, message: "Jogo cadastrado com sucesso" })
-    )
-    .catch(err => res.status(500).json({ error: err }));
-  res
-    .status(201)
-    .json({ success: true, message: "Jogo cadastrado com sucesso" });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 
-exports.deleteGame = (req, res) => {
-  const id = req.params.id;
-  console.log(id);
-  Game.deleteOne({ _id: id })
-    .then(() =>
+exports.deleteGame = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const game = await Game.deleteOne({ _id: id });
+    if (game) {
       res
         .status(200)
-        .json({ success: true, message: "Jogo deletado com sucesso" })
-    )
-    .catch(err => res.status(500).json({ error: err }));
+        .json({ success: true, message: "Jogo deletado com sucesso" });
+    } else {
+      res.status(404).json({ message: "Jogo não encontrado", success: false });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 const getImagesPath = images => {
   return images.map(image => image.path);

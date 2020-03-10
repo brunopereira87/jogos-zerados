@@ -7,7 +7,7 @@ const multer_options = {
       cb(null, "./api/uploads/images");
     },
     filename: (req, file, cb) => {
-      cb(null, Date.now() + file.originalname);
+      cb(null, "teste_create" + Date.now() + file.originalname);
     }
   }),
   limits: {
