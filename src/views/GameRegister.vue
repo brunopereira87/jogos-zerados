@@ -36,7 +36,7 @@ export default {
       const game = await this.formatGame();
 
       api.post("/games", game).then(response => {
-        if (response.data.success) {
+        if (response.data.status === 'success') {
           this.$store.commit("UPDATE_SUCCESS", response.data.message);
           this.$store.commit("UPDATE_GAME", {
             name: "",

@@ -7,6 +7,7 @@ const gamesSchema = Schema({
   },
   plataform: {
     type: Schema.Types.ObjectId,
+    ref: "plataforms",
     required: "Selecione a plataforma para o jogo"
   },
   slug: {
@@ -29,4 +30,12 @@ const gamesSchema = Schema({
   videos: [String]
 });
 
+gamesSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: "plataform",
+    select: "name"
+  });
+
+  next();
+});
 module.exports = mongoose.model("games", gamesSchema);

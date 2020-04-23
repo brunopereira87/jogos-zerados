@@ -13,7 +13,7 @@ const plataformSchema = Schema({
   },
   slug: {
     type: String,
-    required: "O slug da plataforma é obrigatório",
+    //required: "O slug da plataforma é obrigatório",
     unique: [true, "A plataforma já existe"]
   },
   createdAt: {
@@ -25,6 +25,10 @@ const plataformSchema = Schema({
   logo: String
 });
 
+plataformSchema.pre("save", function(next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
 plataformSchema.pre("findOneAndUpdate", async function(next) {
   const plataformToUpdate = await this.model.findOne(this.getQuery());
 
