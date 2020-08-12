@@ -8,10 +8,10 @@ const multer_options = {
     },
     filename: (req, file, cb) => {
       cb(null, "teste_create" + Date.now() + file.originalname);
-    }
+    },
   }),
   limits: {
-    fileSize: 1024 * 1024 * 5
+    fileSize: 1024 * 1024 * 5,
   },
   fileFilter: (req, file, next) => {
     if (image_filters.includes(file.mimetype)) {
@@ -19,7 +19,7 @@ const multer_options = {
     } else {
       next({ message: "Arquivo não suportado" }, false);
     }
-  }
+  },
 };
 
 exports.upload_single = multer(multer_options).single("photo");

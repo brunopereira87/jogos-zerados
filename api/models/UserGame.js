@@ -20,10 +20,11 @@ const UserGameSchema = Schema({
   },
 });
 
-UserGameSchema.pre(/^find/, function(next) {
+UserGameSchema.pre(/^find/, function (next) {
   this.populate({
     path: "game",
     select: "name photo plataform",
   });
+  next();
 });
 module.exports = mongoose.model("userGames", UserGameSchema);

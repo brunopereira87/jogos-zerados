@@ -19,14 +19,14 @@ const userSchema = Schema({
   password: {
     type: String,
     required: [true, "Por favor, digite a senha"],
-    minlength: 8,
+    minlength: [6, "A senha deve possuir no mínimo 6 caracteres"],
     select: false
   },
   passwordConfirm: {
     type: String,
-    required: [true, "Por favor, digite a senha"],
+    required: [true, "Por favor, digite a senha de confirmação"],
     validate: {
-      validator: function(el) {
+      validator: function (el) {
         return el === this.password;
       },
       message: "As duas senhas devem ser iguais"
@@ -54,14 +54,14 @@ const userSchema = Schema({
 });
 
 //CUSTOM METHODS
-userSchema.methods.correctPassword = async function(
+userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -74,7 +74,7 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   return false;
 };
 
-userSchema.methods.createPasswordResetToken = function() {
+userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
   this.passwordResetToken = crypto
@@ -88,13 +88,13 @@ userSchema.methods.createPasswordResetToken = function() {
 };
 
 //SAVE MIDDLEWARES
-userSchema.pre("save", function(next) {
+userSchema.pre("save", function (next) {
   if (!this.isModified("password") || !this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 12);
@@ -104,7 +104,7 @@ userSchema.pre("save", async function(next) {
 });
 
 //QUERY MIDDLEWARES
-userSchema.pre(/^find/, function(next) {
+userSchema.pre(/^find/, function (next) {
   this.populate({
     path: "games",
     select: "name plataform slug artbox"

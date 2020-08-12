@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const slugify = require('slugify');
+
 const gamesSchema = Schema({
   name: {
     type: String,
@@ -30,7 +32,7 @@ const gamesSchema = Schema({
   videos: [String]
 });
 
-gamesSchema.pre(/^find/, function(next) {
+gamesSchema.pre(/^find/, function (next) {
   this.populate({
     path: "plataform",
     select: "name"
@@ -38,4 +40,17 @@ gamesSchema.pre(/^find/, function(next) {
 
   next();
 });
+
+gamesSchema.pre('findOneAndUpdate', async function (next) {
+  const gameToUpdate = await this.model.findOne(this.getQuery());
+
+  gameToUpdate.slug = slugify(gameToUpdate.name, { lower: true });
+  this.findOneAndUpdate(
+    { _id: gameToUpdate._id },
+    { slug: gameToUpdate.slug },
+  );
+
+  next();
+
+})
 module.exports = mongoose.model("games", gamesSchema);

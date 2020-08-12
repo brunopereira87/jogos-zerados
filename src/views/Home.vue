@@ -37,7 +37,7 @@ export default {
       try {
         const response = await api.get("/games");
         this.games = response.data.games;
-        console.log("GAmes:", this.games);
+        console.log("GAmes:", response.data);
       } catch (error) {
         console.log(error);
       }

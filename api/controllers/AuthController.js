@@ -14,9 +14,8 @@ const signToken = id => {
 };
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-
   const cookieOptions = {
-    expires: new Date(Date.now * 1000 * 60 * 60 * 24),
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 1000 * 60 * 60 * 24),
     httpOnly: true
   };
 
@@ -27,10 +26,12 @@ const createSendToken = (user, statusCode, res) => {
   res.status(statusCode).json({
     status: "success",
     token,
-    user
+    user,
+    tokenExpiration: cookieOptions.expires
   });
 };
 exports.signUp = catchAsync(async (req, res, next) => {
+
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -150,7 +151,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
-    console.log(err);
+
     await user.save({ validateBeforeSave: false });
 
     return next(
@@ -203,6 +204,5 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
 
   const updateUser = await user.save();
-  console.log(updateUser);
   createSendToken(user, 200, res);
 });

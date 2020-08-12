@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-require("dotenv").config({ path: "variables.env" });
+require("dotenv").config({ path: __dirname + "/variables.env" });
+console.log(__dirname)
+console.log('Env:', process.env.DATABASE)
 process.on("uncaughtException", err => {
   console.log(err.name, err.message);
   console.log("UNCAUGHT EXCEPTION! SHUTING DOWN...");

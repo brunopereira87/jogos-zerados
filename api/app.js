@@ -70,3 +70,14 @@ app.all("*", (req, res, next) => {
 
 app.use(globalErrorHandler);
 module.exports = app;
+
+// getPagination(totalpages) {
+//   this.totalpages = totalpages;
+
+//   let nums = range(totalpages)
+//   let init = this.actualPage > 5 ? this.actualPage - 4 : 1;
+//   let fim = this.actualPage + 5 < totalpages ? this.actualPage + 5 : totalpages;
+//   console.log('Range:', init, fim)
+//   console.log(nums.slice(init, fim))
+//   return this.pagination = nums.slice(init, fim)
+// }
